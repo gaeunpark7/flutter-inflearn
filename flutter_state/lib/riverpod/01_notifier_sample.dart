@@ -9,4 +9,3 @@ class Counter extends Notifier<int> {
   }
 }
 
-final counterProvider = NotifierProvider<Counter, int>(Counter.new);
