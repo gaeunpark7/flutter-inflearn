@@ -22,7 +22,6 @@ class PhotoNotifier extends AsyncNotifier<List<PhotoModel>> {
       state = const AsyncData(<PhotoModel>[]);
       return;
     }
-
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => _photoRepo.getPhoto(trimmed));
   }

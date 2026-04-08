@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_search/data/photo_notifier.dart';
-import 'package:image_search/model/photo_model.dart';
 import 'package:image_search/ui/widget/photo_widget.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -22,7 +21,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final photos = ref.watch(photoNotifierProvider).value ?? <PhotoModel>[];
+    //성공 상태의 값만 꺼내서 보여줌.
+    final asyncPhotos = ref.watch(photoNotifierProvider);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -51,16 +51,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
             Expanded(
-              child: GridView.builder(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
+              child: switch (asyncPhotos) {
+                AsyncLoading() => Center(
+                  child: CircularProgressIndicator(color: Colors.blueGrey),
                 ),
-                itemCount: photos.length,
-                itemBuilder: (ctx, index) => PhotoWidget(photo: photos[index]),
-              ),
+                AsyncError(:final error) => Center(
+                  child: Text('에러 발생: $error'),
+                ),
+                AsyncData(value: final photos) => GridView.builder(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                  ),
+                  itemCount: asyncPhotos.value.length,
+                  itemBuilder: (ctx, index) =>
+                      PhotoWidget(photo: asyncPhotos.value[index]),
+                ),
+              },
             ),
           ],
         ),
