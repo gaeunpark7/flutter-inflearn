@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:image_search/model/photo_model.dart';
+import 'package:image_search/domain/model/photo_model.dart';
 
 class PhotoWidget extends StatelessWidget {
   const PhotoWidget({super.key, required this.photo});
@@ -11,7 +11,7 @@ class PhotoWidget extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: NetworkImage(photo.previewURL),
+          image: NetworkImage(photo.previewUrl),
           fit: BoxFit.cover,
         ),
         color: Colors.blueGrey,

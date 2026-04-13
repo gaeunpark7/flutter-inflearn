@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http_mock_adapter/http_mock_adapter.dart';
-import 'package:image_search/data/photo_repo.dart';
-import 'package:image_search/model/photo_model.dart';
+import 'package:image_search/data/data_source/pixabay_api.dart';
+import 'package:image_search/domain/repository/photo_repo.dart';
+import 'package:image_search/data/repository/pixabay_photo_repo_impl.dart';
+import 'package:image_search/domain/model/photo_model.dart';
 
 void main() {
   late Dio dio;
@@ -16,7 +18,9 @@ void main() {
     dio = Dio();
     adapter = DioAdapter(dio: dio);
     dio.httpClientAdapter = adapter;
-    repo = PhotoRepo(dio: dio, baseUrl: baseUrl, key: key);
+
+    final api = PixabayApi(dio: dio, baseUrl: baseUrl, key: key);
+    repo = PixabayPhotoRepo(api: api);
   });
 
   test('검색어 "apple"을 던지면 정확한 파라미터로 요청하고 모델로 변환해야 한다', () async {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_search/data/photo_notifier.dart';
-import 'package:image_search/ui/widget/photo_widget.dart';
+import 'package:image_search/presentation/riverpod/photo_notifier.dart';
+import 'package:image_search/presentation/home/widget/photo_widget.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -55,9 +55,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 AsyncLoading() => Center(
                   child: CircularProgressIndicator(color: Colors.blueGrey),
                 ),
-                AsyncError(:final error) => Center(
-                  child: Text('에러 발생: $error'),
+                AsyncError(:final error) => Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_rounded, color: Colors.blueGrey, size: 50),
+                    Text('에러 발생: $error'),
+                  ],
                 ),
+
                 AsyncData(value: final photos) => GridView.builder(
                   padding: EdgeInsets.symmetric(vertical: 16),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
