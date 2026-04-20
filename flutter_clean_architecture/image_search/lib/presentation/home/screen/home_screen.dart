@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_search/presentation/home/screen/home_ui_event.dart';
 import 'package:image_search/presentation/riverpod/photo_notifier.dart';
 import 'package:image_search/presentation/home/widget/photo_widget.dart';
 
@@ -12,9 +15,27 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final _searchController = TextEditingController();
+  StreamSubscription? _subscription;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      final eventSnackBar = ref.read(photoNotifierProvider.notifier);
+      _subscription = eventSnackBar.eventStream.listen(
+        (event) => event.when(
+          showSnackBar: (message) => ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(message))),
+        ),
+      );
+    });
+  }
 
   @override
   void dispose() {
+    _subscription?.cancel();
     _searchController.dispose();
     super.dispose();
   }

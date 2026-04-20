@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http_mock_adapter/http_mock_adapter.dart';
 import 'package:image_search/data/data_source/pixabay_api.dart';
+import 'package:image_search/domain/common/result.dart';
 import 'package:image_search/domain/repository/photo_repo.dart';
 import 'package:image_search/data/repository/pixabay_photo_repo_impl.dart';
 import 'package:image_search/domain/model/photo_model.dart';
@@ -66,9 +67,15 @@ void main() {
     );
 
     // When: 실행
-    final photos = await repo.getPhoto('apple');
+    final result = await repo.getPhoto('apple');
+
+    result.when(
+      success: (photos) {
+        expect(photos, isA<List<PhotoModel>>());
+        expect(photos.first.id, 10);
+      },
+      error: (message) => fail('Expected success, got error: $message'),
+    );
     // Then: 검증
-    expect(photos, isA<List<PhotoModel>>());
-    expect(photos.first.id, 10);
   });
 }

@@ -83,10 +83,7 @@ final _that = this;
 switch (_that) {
 case Success():
 return success(_that);case Error():
-return error(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return error(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -148,10 +145,7 @@ return error(_that.message);case _:
 switch (_that) {
 case Success():
 return success(_that.data);case Error():
-return error(_that.message);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return error(_that.message);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

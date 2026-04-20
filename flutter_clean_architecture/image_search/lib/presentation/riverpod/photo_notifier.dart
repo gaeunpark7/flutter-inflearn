@@ -1,22 +1,23 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_search/data/data_source/pixabay_api.dart';
-import 'package:image_search/domain/repository/photo_repo.dart';
-import 'package:image_search/data/repository/pixabay_photo_repo_impl.dart';
+import 'package:image_search/di/provider_setup.dart';
+import 'package:image_search/domain/common/result.dart';
 import 'package:image_search/domain/model/photo_model.dart';
-
-final photoRepoProvider = Provider<PhotoRepo>(
-  (ref) => PixabayPhotoRepo(api: PixabayApi()),
-);
+import 'package:image_search/presentation/home/screen/home_ui_event.dart';
 
 final photoNotifierProvider =
     AsyncNotifierProvider<PhotoNotifier, List<PhotoModel>>(PhotoNotifier.new);
 
+//photoRiverpod
 class PhotoNotifier extends AsyncNotifier<List<PhotoModel>> {
-  late final PhotoRepo _photoRepo;
+  //event Controller
+  final _eventController = StreamController<HomeUiEvent>();
+  Stream<HomeUiEvent> get eventStream => _eventController.stream;
 
+  //build
   @override
   Future<List<PhotoModel>> build() async {
-    _photoRepo = ref.watch(photoRepoProvider);
+    ref.onDispose(_eventController.close);
     return <PhotoModel>[];
   }
 
@@ -27,6 +28,18 @@ class PhotoNotifier extends AsyncNotifier<List<PhotoModel>> {
       return;
     }
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => _photoRepo.getPhoto(trimmed));
+    state = await AsyncValue.guard(() async {
+      final useCase = ref.read(getPhotosUseCaseProvider);
+      final result = await useCase.execute(trimmed);
+
+      return result.when(
+        success: (photos) => photos,
+        error: (message) {
+          _eventController.add(HomeUiEvent.showSnackBar(message));
+          // return state.value ?? <PhotoModel>[];
+          throw Exception(message);
+        },
+      );
+    });
   }
 }

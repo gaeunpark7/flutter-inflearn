@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:image_search/di/provider_setup.dart';
+import 'package:image_search/domain/common/result.dart';
 import 'package:image_search/domain/repository/photo_repo.dart';
 import 'package:image_search/presentation/riverpod/photo_notifier.dart';
 import 'package:image_search/domain/model/photo_model.dart';
@@ -7,20 +9,21 @@ import 'package:image_search/domain/model/photo_model.dart';
 //성공
 class FakePhotoRepo implements PhotoRepo {
   FakePhotoRepo(this.result);
-  final List<PhotoModel> result;
+  // final List<PhotoModel> result;
+  final Result<List<PhotoModel>> result;
 
   @override
-  Future<List<PhotoModel>> getPhoto(String query) async {
+  Future<Result<List<PhotoModel>>> getPhoto(String query) async {
     // return <PhotoModel>[];
     return result;
   }
 }
 
 //실패
-class ThrowingPhotoRepo implements PhotoRepo {
+class ErrorPhotoRepo implements PhotoRepo {
   @override
-  Future<List<PhotoModel>> getPhoto(String query) {
-    throw Exception('boom');
+  Future<Result<List<PhotoModel>>> getPhoto(String query) async {
+    return Result.error('boom');
   }
 }
 
@@ -28,7 +31,9 @@ void main() {
   test('search 성공이면 AsyncData([])가 된다', () async {
     final container = ProviderContainer(
       overrides: [
-        photoRepoProvider.overrideWithValue(FakePhotoRepo(<PhotoModel>[])),
+        photoRepoProvider.overrideWithValue(
+          FakePhotoRepo(Result.success(<PhotoModel>[])),
+        ),
       ],
     );
     addTearDown(container.dispose);
@@ -44,7 +49,7 @@ void main() {
 
   test('search 실패해도 throw가 아니라 state가 AsyncError가 된다(guard 때문)', () async {
     final container = ProviderContainer(
-      overrides: [photoRepoProvider.overrideWithValue(ThrowingPhotoRepo())],
+      overrides: [photoRepoProvider.overrideWithValue(ErrorPhotoRepo())],
     );
     addTearDown(container.dispose);
 
@@ -58,7 +63,9 @@ void main() {
   test('빈 문자열이면 결과가 빈 리스트로 리셋된다', () async {
     final container = ProviderContainer(
       overrides: [
-        photoRepoProvider.overrideWithValue(FakePhotoRepo(<PhotoModel>[])),
+        photoRepoProvider.overrideWithValue(
+          FakePhotoRepo(Result.success(<PhotoModel>[])),
+        ),
       ],
     );
     addTearDown(container.dispose);
@@ -74,7 +81,9 @@ void main() {
 
     final container = ProviderContainer(
       overrides: [
-        photoRepoProvider.overrideWithValue(FakePhotoRepo(fakeResult)),
+        photoRepoProvider.overrideWithValue(
+          FakePhotoRepo(Result.success(fakeResult)),
+        ),
       ],
     );
     addTearDown(container.dispose);

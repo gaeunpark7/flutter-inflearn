@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:image_search/data/data_source/result.dart';
+import 'package:image_search/domain/common/result.dart';
 
 class PixabayApi {
   PixabayApi({
@@ -20,9 +20,10 @@ class PixabayApi {
       );
       final data = List<Map<String, dynamic>>.from(response.data['hits']);
       // return List<Map<String, dynamic>>.from(response.data['hits']);
+
       return Result.success(data);
     } catch (e) {
-      return Result.error('네트워크 에러: $e');
+      return Result.error('네트워크 에러');
     }
   }
 }
