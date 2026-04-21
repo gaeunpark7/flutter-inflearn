@@ -1,9 +1,9 @@
 import 'package:note_app/domain/model/note.dart';
 import 'package:sqflite/sqflite.dart';
 
-class NoteDb {
+class NoteDbHelper {
   Database db;
-  NoteDb(this.db);
+  NoteDbHelper(this.db);
 
   Future<Note?> getNoteById(int id) async {
     //select * from note where id = 1
@@ -13,7 +13,7 @@ class NoteDb {
       whereArgs: [id],
     );
     if (maps.isNotEmpty) {
-      Note.fromJson(maps.first);
+      return Note.fromJson(maps.first);
     }
     return null;
   }
