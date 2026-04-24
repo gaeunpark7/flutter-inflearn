@@ -36,7 +36,25 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
         loading: () => Center(child: CircularProgressIndicator()),
         error: (e, s) => Center(child: Text('Error: $e')),
         data: (notes) => ListView(
-          children: [for (final note in notes) NoteItem(note: note)],
+          children: [
+            for (final note in notes)
+              NoteItem(
+                note: note,
+                onDeleteTap: () {
+                  ref.read(noteNotifierProvider.notifier).deleteNote(note);
+                  final snackBar = SnackBar(
+                    content: const Text('노트가 삭제되었습니다.'),
+                    action: SnackBarAction(
+                      label: '취소',
+                      onPressed: () {
+                        ref.read(noteNotifierProvider.notifier).restoreNote();
+                      },
+                    ),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                },
+              ),
+          ],
           // children: [
           //   NoteItem(
           //     note: Note(

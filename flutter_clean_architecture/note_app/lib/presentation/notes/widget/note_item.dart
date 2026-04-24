@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:note_app/domain/model/note.dart';
-import 'package:note_app/presentation/notes/common/note_colors.dart';
 
 class NoteItem extends StatelessWidget {
   final Note note;
@@ -42,10 +41,12 @@ class NoteItem extends StatelessWidget {
           Positioned(
             bottom: 6,
             right: 6,
-            child: IconButton(onPressed: () {
-              onDeleteTap?.call();
-            }, 
-            icon: Icon(Icons.delete)),
+            child: IconButton(
+              onPressed: () {
+                onDeleteTap?.call();
+              },
+              icon: Icon(Icons.delete),
+            ),
           ),
         ],
       ),
