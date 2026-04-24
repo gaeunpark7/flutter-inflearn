@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:note_app/di/provider_setup.dart';
 import 'package:note_app/domain/model/note.dart';
+import 'package:note_app/presentation/notes/common/validation_exception.dart';
 import 'package:note_app/presentation/notes/riverpod/selected_color_notifier.dart';
 
 final addEditNotifierProvider = AsyncNotifierProvider<AddEditNotifier, void>(
@@ -18,6 +19,10 @@ class AddEditNotifier extends AsyncNotifier<void> {
     final updateNote = ref.read(updateNoteUseCaseProvider);
     final color = ref.read(selectedColorProvider);
 
+    if (title.isEmpty || content.isEmpty) {
+      throw ValidationException('제목이나 내용이 비어있습니다.');
+    }
+
     final note = Note(
       id: id,
       title: title,
@@ -26,12 +31,10 @@ class AddEditNotifier extends AsyncNotifier<void> {
       timestamp: DateTime.now().millisecondsSinceEpoch,
     );
 
-    state = await AsyncValue.guard(() async {
-      if (id == null) {
-        await addNote(note);
-      } else {
-        await updateNote(note);
-      }
-    });
+    if (id == null) {
+      await addNote(note);
+    } else {
+      await updateNote(note);
+    }
   }
 }

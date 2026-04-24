@@ -38,41 +38,37 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
         data: (notes) => ListView(
           children: [
             for (final note in notes)
-              NoteItem(
-                note: note,
-                onDeleteTap: () {
-                  ref.read(noteNotifierProvider.notifier).deleteNote(note);
-                  final snackBar = SnackBar(
-                    content: const Text('노트가 삭제되었습니다.'),
-                    action: SnackBarAction(
-                      label: '취소',
-                      onPressed: () {
-                        ref.read(noteNotifierProvider.notifier).restoreNote();
-                      },
+              GestureDetector(
+                onTap: () async {
+                  final saves = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (ctx) => AddEditScreen(note: note),
                     ),
                   );
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  if (saves == true) {
+                    ref.invalidate(noteNotifierProvider);
+                  }
                 },
+
+                child: NoteItem(
+                  note: note,
+                  onDeleteTap: () {
+                    ref.read(noteNotifierProvider.notifier).deleteNote(note);
+                    final snackBar = SnackBar(
+                      content: const Text('노트가 삭제되었습니다.'),
+                      action: SnackBarAction(
+                        label: '취소',
+                        onPressed: () {
+                          ref.read(noteNotifierProvider.notifier).restoreNote();
+                        },
+                      ),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  },
+                ),
               ),
           ],
-          // children: [
-          //   NoteItem(
-          //     note: Note(
-          //       title: 'title1fd;gk;dlfkg;lskgl;jsdjgksj;ljgd;ljlkjd;kfl;',
-          //       content: 'content1',
-          //       color: wisteria.value,
-          //       timestamp: 1,
-          //     ),
-          //   ),
-          //   NoteItem(
-          //     note: Note(
-          //       title: 'title2',
-          //       content: 'content2',
-          //       color: skyBlue.value,
-          //       timestamp: 1,
-          //     ),
-          //   ),
-          // ],
         ),
       ),
       floatingActionButton: FloatingActionButton(

@@ -13,7 +13,8 @@ class NoteNotifier extends AsyncNotifier<List<Note>> {
   @override
   Future<List<Note>> build() async {
     final getNotes = ref.watch(getNotesUseCaseProvider);
-    final notes = await getNotes();
+    final List<Note> notes = await getNotes();
+    notes.sort((a, b) => -a.timestamp.compareTo(b.timestamp));
     return UnmodifiableListView(List<Note>.from(notes));
     // return <Note>[];
   }

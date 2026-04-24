@@ -32,6 +32,10 @@ class _AddEditScreenState extends ConsumerState<AddEditScreen> {
   @override
   void initState() {
     super.initState();
+    if (widget.note != null) {
+      _titleController.text = widget.note!.title;
+      _contentController.text = widget.note!.content;
+    }
   }
 
   @override
@@ -91,20 +95,19 @@ class _AddEditScreenState extends ConsumerState<AddEditScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white,
         onPressed: () async {
-          if (_titleController.text.isEmpty ||
-              _contentController.text.isEmpty) {
-            final snackBar = SnackBar(content: Text('제목이나 내용이 비어있습니다.'));
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          }
-          await ref
-              .read(addEditNotifierProvider.notifier)
-              .saveNote(
-                widget.note?.id,
-                _titleController.text,
-                _contentController.text,
-              );
-          if (context.mounted) {
-            Navigator.pop(context, true);
+          try {
+            await ref
+                .read(addEditNotifierProvider.notifier)
+                .saveNote(
+                  widget.note?.id,
+                  _titleController.text,
+                  _contentController.text,
+                );
+            if (context.mounted) Navigator.pop(context, true);
+          } catch (e) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(e.toString())));
           }
         },
         shape: CircleBorder(),
