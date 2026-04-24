@@ -1,7 +1,7 @@
 import 'dart:collection';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:note_app/di/provider_setup.dart';
 import 'package:note_app/domain/model/note.dart';
-import 'package:note_app/domain/repository/riverpod/note_notifier.dart';
 
 final noteNotifierProvider = AsyncNotifierProvider<NoteNotifier, List<Note>>(
   NoteNotifier.new,
