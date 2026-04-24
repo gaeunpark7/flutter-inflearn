@@ -1,22 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:note_app/data/repository/fake_note_repo.dart';
+import 'package:note_app/di/provider_setup.dart';
 import 'package:note_app/domain/model/note.dart';
-import 'package:note_app/domain/repository/note_repository.dart';
-import 'package:note_app/domain/use_case/add_note_use_case.dart';
-import 'package:note_app/domain/use_case/update_note_use_case.dart';
-
-final repoProvider = Provider<NoteRepository>((ref) => FakeNoteRepository());
-
-final addNoteUseCaseProvider = Provider<AddNoteUseCase>((ref) {
-  final repo = ref.watch(repoProvider);
-  return AddNoteUseCase(repo);
-});
-
-final updateNoteUseCaseProvider = Provider<UpdateNoteUseCase>((ref) {
-  final repo = ref.watch(repoProvider);
-  return UpdateNoteUseCase(repo);
-});
 
 final addEditNotifierProvider = AsyncNotifierProvider<AddEditNotifier, void>(
   AddEditNotifier.new,

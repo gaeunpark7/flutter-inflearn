@@ -10,10 +10,10 @@ class AddEditScreen extends StatefulWidget {
   State<AddEditScreen> createState() => _AddEditScreenState();
 }
 
-final _titleController = TextEditingController();
-final _contentController = TextEditingController();
-
 class _AddEditScreenState extends State<AddEditScreen> {
+  final _titleController = TextEditingController();
+  final _contentController = TextEditingController();
+
   final List<Color> noteColors = [
     roseBud,
     primrose,
