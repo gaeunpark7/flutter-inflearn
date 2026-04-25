@@ -2,6 +2,8 @@ import 'dart:collection';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:note_app/di/provider_setup.dart';
 import 'package:note_app/domain/model/note.dart';
+import 'package:note_app/domain/util/note_order.dart';
+import 'package:note_app/domain/util/order_type.dart';
 
 final noteNotifierProvider = AsyncNotifierProvider<NoteNotifier, List<Note>>(
   NoteNotifier.new,
@@ -12,7 +14,9 @@ class NoteNotifier extends AsyncNotifier<List<Note>> {
 
   Future<UnmodifiableListView<Note>> _fetchNotes() async {
     final useCases = ref.read(noteUseCasesProvider);
-    final notes = await useCases.getNotes();
+    final notes = await useCases.getNotes(
+      NoteOrder.date(OrderType.descending()),
+    );
     return UnmodifiableListView(List<Note>.from(notes));
   }
 

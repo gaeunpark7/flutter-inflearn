@@ -4,6 +4,7 @@ import 'package:note_app/presentation/notes/riverpod/note_notifier.dart';
 import 'package:note_app/presentation/notes/screen/add_edit_screen.dart';
 import 'package:note_app/presentation/notes/common/note_colors.dart';
 import 'package:note_app/presentation/notes/widget/note_item.dart';
+import 'package:note_app/presentation/notes/widget/order_section.dart';
 
 class NotesScreen extends ConsumerStatefulWidget {
   const NotesScreen({super.key});
