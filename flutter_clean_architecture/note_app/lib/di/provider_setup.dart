@@ -4,28 +4,39 @@ import 'package:note_app/domain/repository/note_repository.dart';
 import 'package:note_app/domain/use_case/add_note_use_case.dart';
 import 'package:note_app/domain/use_case/delete_note_use_case.dart';
 import 'package:note_app/domain/use_case/get_note_use_case.dart';
+import 'package:note_app/domain/use_case/note_use_cases.dart';
+import 'package:note_app/domain/use_case/save_note_use_case.dart';
 import 'package:note_app/domain/use_case/update_note_use_case.dart';
 
 final fakeRepoProvider = Provider<NoteRepository>(
   (ref) => FakeNoteRepository(),
 );
 
-final getNotesUseCaseProvider = Provider<GetNotesUseCase>((ref) {
+final noteUseCasesProvider = Provider<NoteUseCases>((ref) {
   final repo = ref.watch(fakeRepoProvider);
-  return GetNotesUseCase(repo);
+  final addNote = AddNoteUseCase(repo);
+  final updateNote = UpdateNoteUseCase(repo);
+  return NoteUseCases(
+    getNotes: GetNotesUseCase(repo),
+    addNote: addNote,
+    updateNote: updateNote,
+    deleteNote: DeleteNoteUseCase(repo),
+    saveNote: SaveNoteUseCase(addNote: addNote, updateNote: updateNote),
+  );
+});
+
+final getNotesUseCaseProvider = Provider<GetNotesUseCase>((ref) {
+  return ref.watch(noteUseCasesProvider).getNotes;
 });
 
 final addNoteUseCaseProvider = Provider<AddNoteUseCase>((ref) {
-  final repo = ref.watch(fakeRepoProvider);
-  return AddNoteUseCase(repo);
+  return ref.watch(noteUseCasesProvider).addNote;
 });
 
 final updateNoteUseCaseProvider = Provider<UpdateNoteUseCase>((ref) {
-  final repo = ref.watch(fakeRepoProvider);
-  return UpdateNoteUseCase(repo);
+  return ref.watch(noteUseCasesProvider).updateNote;
 });
 
 final deleteNoteUseCaseProvider = Provider<DeleteNoteUseCase>((ref) {
-  final repo = ref.watch(fakeRepoProvider);
-  return DeleteNoteUseCase(repo);
+  return ref.watch(noteUseCasesProvider).deleteNote;
 });

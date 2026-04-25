@@ -15,8 +15,7 @@ class AddEditNotifier extends AsyncNotifier<void> {
   Future<void> saveNote(int? id, String title, String content) async {
     state = const AsyncLoading();
 
-    final addNote = ref.read(addNoteUseCaseProvider);
-    final updateNote = ref.read(updateNoteUseCaseProvider);
+    final useCases = ref.read(noteUseCasesProvider);
     final color = ref.read(selectedColorProvider);
 
     if (title.isEmpty || content.isEmpty) {
@@ -31,10 +30,6 @@ class AddEditNotifier extends AsyncNotifier<void> {
       timestamp: DateTime.now().millisecondsSinceEpoch,
     );
 
-    if (id == null) {
-      await addNote(note);
-    } else {
-      await updateNote(note);
-    }
+    await useCases.saveNote(note);
   }
 }

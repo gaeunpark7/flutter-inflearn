@@ -47,8 +47,7 @@ class _AddEditScreenState extends ConsumerState<AddEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final saveState = ref.watch(addEditNotifierProvider);
-
+    // final saveState = ref.watch(addEditNotifierProvider);
     final selectedColorValue = ref.watch(selectedColorProvider);
     final selectedColor = Color(selectedColorValue);
 

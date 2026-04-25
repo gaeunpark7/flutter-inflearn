@@ -10,22 +10,23 @@ final noteNotifierProvider = AsyncNotifierProvider<NoteNotifier, List<Note>>(
 class NoteNotifier extends AsyncNotifier<List<Note>> {
   Note? _lastDeletedNote;
 
+  Future<UnmodifiableListView<Note>> _fetchNotes() async {
+    final useCases = ref.read(noteUseCasesProvider);
+    final notes = await useCases.getNotes();
+    return UnmodifiableListView(List<Note>.from(notes));
+  }
+
   @override
   Future<List<Note>> build() async {
-    final getNotes = ref.watch(getNotesUseCaseProvider);
-    final List<Note> notes = await getNotes();
-    notes.sort((a, b) => -a.timestamp.compareTo(b.timestamp));
-    return UnmodifiableListView(List<Note>.from(notes));
+    ref.watch(noteUseCasesProvider);
+    return _fetchNotes();
     // return <Note>[];
   }
 
   Future<void> loadNotes() async {
     state = const AsyncLoading();
-    final getNotes = ref.read(getNotesUseCaseProvider);
-
     state = await AsyncValue.guard(() async {
-      final notes = await getNotes();
-      return UnmodifiableListView(List<Note>.from(notes)); //새 리스트로 만들어 UI 갱신
+      return _fetchNotes(); //새 리스트로 만들어 UI 갱신
     });
   }
 
@@ -33,13 +34,11 @@ class NoteNotifier extends AsyncNotifier<List<Note>> {
     _lastDeletedNote = note;
 
     state = const AsyncLoading();
-    final delete = ref.read(deleteNoteUseCaseProvider);
-    final getNotes = ref.read(getNotesUseCaseProvider);
+    final useCases = ref.read(noteUseCasesProvider);
 
     state = await AsyncValue.guard(() async {
-      await delete(note);
-      final notes = await getNotes();
-      return UnmodifiableListView(List<Note>.from(notes));
+      await useCases.deleteNote(note);
+      return _fetchNotes();
     });
   }
 
@@ -48,14 +47,12 @@ class NoteNotifier extends AsyncNotifier<List<Note>> {
     if (noteToRestore == null) return;
 
     state = const AsyncLoading();
-    final addNote = ref.read(addNoteUseCaseProvider);
-    final getNotes = ref.read(getNotesUseCaseProvider);
+    final useCases = ref.read(noteUseCasesProvider);
 
     state = await AsyncValue.guard(() async {
-      await addNote(noteToRestore);
+      await useCases.addNote(noteToRestore);
       _lastDeletedNote = null;
-      final notes = await getNotes();
-      return UnmodifiableListView(List<Note>.from(notes));
+      return _fetchNotes();
     });
   }
 }
