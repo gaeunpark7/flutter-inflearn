@@ -17,6 +17,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
   @override
   Widget build(BuildContext context) {
     final notesAsync = ref.watch(noteNotifierProvider);
+    final noteOrder = ref.watch(noteOrderProvider);
 
     return Scaffold(
       backgroundColor: darkGray,
@@ -38,6 +39,12 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
         error: (e, s) => Center(child: Text('Error: $e')),
         data: (notes) => ListView(
           children: [
+            OrderSection(
+              noteOrder: noteOrder,
+              onOrderChange: (order) {
+                ref.read(noteNotifierProvider.notifier).changeOrder(order);
+              },
+            ),
             for (final note in notes)
               GestureDetector(
                 onTap: () async {
