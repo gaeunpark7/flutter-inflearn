@@ -61,7 +61,7 @@ class _AddEditScreenState extends ConsumerState<AddEditScreen> {
         ),
         color: selectedColor,
         duration: Duration(milliseconds: 500),
-        child: Column(
+        child: ListView(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,

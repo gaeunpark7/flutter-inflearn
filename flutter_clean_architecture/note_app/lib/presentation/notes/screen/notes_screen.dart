@@ -14,6 +14,8 @@ class NotesScreen extends ConsumerStatefulWidget {
 }
 
 class _NotesScreenState extends ConsumerState<NotesScreen> {
+  bool _isOrderSectionVisible = false;
+
   @override
   Widget build(BuildContext context) {
     final notesAsync = ref.watch(noteNotifierProvider);
@@ -29,7 +31,11 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                _isOrderSectionVisible = !_isOrderSectionVisible;
+              });
+            },
             icon: Icon(Icons.sort, color: Colors.white),
           ),
         ],
@@ -39,11 +45,21 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
         error: (e, s) => Center(child: Text('Error: $e')),
         data: (notes) => ListView(
           children: [
-            OrderSection(
-              noteOrder: noteOrder,
-              onOrderChange: (order) {
-                ref.read(noteNotifierProvider.notifier).changeOrder(order);
-              },
+            AnimatedSwitcher(
+              duration: Duration(milliseconds: 300),
+              child: _isOrderSectionVisible
+                  ? OrderSection(
+                      key: const ValueKey('order_section'),
+                      noteOrder: noteOrder,
+                      onOrderChange: (order) {
+                        ref
+                            .read(noteNotifierProvider.notifier)
+                            .changeOrder(order);
+                      },
+                    )
+                  : const SizedBox.shrink(
+                      key: ValueKey('order_section_hidden'),
+                    ),
             ),
             for (final note in notes)
               GestureDetector(
@@ -58,7 +74,6 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                     ref.invalidate(noteNotifierProvider);
                   }
                 },
-
                 child: NoteItem(
                   note: note,
                   onDeleteTap: () {
