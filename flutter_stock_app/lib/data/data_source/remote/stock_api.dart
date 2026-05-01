@@ -7,7 +7,7 @@ class StockApi {
 
   StockApi({Dio? dio}) : _dio = dio ?? Dio();
 
-  Future<Response> getListings(String apiKey) async {
+  Future<Response> getListings({String apiKey = apiKey}) async {
     return await _dio.get(
       'https://www.alphavantage.co/query?function=LISTING_STATUS&apikey=$apiKey',
     );
