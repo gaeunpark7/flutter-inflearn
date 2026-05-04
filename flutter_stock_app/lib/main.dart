@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_stock_app/data/data_source/local/company_listing_entity.dart';
 import 'package:flutter_stock_app/util/theme.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+void main() async {
+  Hive.initFlutter(); //hive init
   Hive.registerAdapter(CompanyListingEntityAdapter());
+
   runApp(const MyApp());
 }
 
@@ -59,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: .center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text('You have pushed the button this many times:'),
             Text(

@@ -3,26 +3,26 @@ import 'package:hive/hive.dart';
 
 class StockDao {
   static const companyListing = 'companyListing'; //Hive 내부에 사용할 키
-  final box = Hive.box('stock.db');
 
   //추가
   Future<void> insertCompanyListings(
     List<CompanyListingEntity> companyListingEntity,
   ) async {
-    await box.put(StockDao.companyListing, companyListingEntity);
+    final box = await Hive.openBox('stock.db');
+    await box.addAll(companyListingEntity);
   }
 
   //클리어
   Future<void> clearCompanyListing() async {
+    final box = await Hive.openBox('stock.db');
     await box.clear();
   }
 
   //검색
   Future<List<CompanyListingEntity>> searchCompanyListing(String query) async {
-    final List<CompanyListingEntity> companyListing = await box.get(
-      StockDao.companyListing,
-      defaultValue: <CompanyListingEntity>[],
-    );
+    final box = await Hive.openBox<CompanyListingEntity>('stock.db');
+    final List<CompanyListingEntity> companyListing = box.values.toList();
+
     return companyListing
         .where(
           (e) =>
