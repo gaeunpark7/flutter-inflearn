@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter_stock_app/data/data_source/csv/company_listing_parser.dart';
 import 'package:flutter_stock_app/data/data_source/local/stock_dao.dart';
 import 'package:flutter_stock_app/data/data_source/remote/stock_api.dart';
 import 'package:flutter_stock_app/data/mapper/company_mapper.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_stock_app/util/result.dart';
 class StockRepositoryImpl implements StockRepository {
   final StockApi _api;
   final StockDao _dao;
+  final _parser = CompanyListingParser();
 
   StockRepositoryImpl(this._api, this._dao);
 
@@ -26,12 +28,23 @@ class StockRepositoryImpl implements StockRepository {
 
     if (shouldJustLoadFromCache) {
       return Result.success(
-        localListings.map((e) => e.toCompayListing()).toList(),
+        localListings.map((e) => e.toCompanyListing()).toList(),
       );
     }
+    // 리모트
     try {
-      final remoteListings = await _api.getListings();
-      return Result.success([]); //remoteListings CSV 파싱 변환
+      final response = await _api.getListings();
+      final remoteListings = await _parser.parse(response.data);
+
+      //캐시 비우기
+      await _dao.clearCompanyListing();
+
+      // 캐시 추가
+      await _dao.insertCompanyListings(
+        remoteListings.map((e) => e.toCompanyListingEntity()).toList(),
+      );
+
+      return Result.success(remoteListings);
     } catch (e) {
       return Result.error(Exception('데이터 로드 실패: $e'));
     }

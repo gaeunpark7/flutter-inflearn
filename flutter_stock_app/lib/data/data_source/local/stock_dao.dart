@@ -1,8 +1,8 @@
-import 'package:flutter_stock_app/data/source/local/company_listing_entity.dart';
+import 'package:flutter_stock_app/data/data_source/local/company_listing_entity.dart';
 import 'package:hive/hive.dart';
 
 class StockDao {
-  static const companyListing = 'companyListing';
+  static const companyListing = 'companyListing'; //Hive 내부에 사용할 키
   final box = Hive.box('stock.db');
 
   //추가
