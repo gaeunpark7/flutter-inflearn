@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 
 class CompanyTextField extends StatelessWidget {
-  const CompanyTextField({super.key, required this.controller});
+  const CompanyTextField({
+    super.key,
+    required this.controller,
+    required this.onChanged,
+  });
 
   final TextEditingController controller;
+  final Function(String) onChanged;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      style: TextStyle(color: Colors.white),
       controller: controller,
+      onChanged: onChanged,
       decoration: InputDecoration(
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(

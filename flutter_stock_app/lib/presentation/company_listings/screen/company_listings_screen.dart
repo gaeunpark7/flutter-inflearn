@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_stock_app/presentation/company_listings/widget/company_text_field.dart';
@@ -13,9 +15,18 @@ class CompanyListingsScreen extends ConsumerStatefulWidget {
 
 class _CompanyListingsScreenState extends ConsumerState<CompanyListingsScreen> {
   final _searchController = TextEditingController();
+  Timer? _debounce;
+
+  void _onsearchChanged(String value) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      ref.read(companyNotifierProvider.notifier).searchListing(value);
+    });
+  }
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -30,7 +41,10 @@ class _CompanyListingsScreenState extends ConsumerState<CompanyListingsScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: CompanyTextField(controller: _searchController),
+              child: CompanyTextField(
+                controller: _searchController,
+                onChanged: (value) => _onsearchChanged(value),
+              ),
             ),
             Expanded(
               child: RefreshIndicator(
