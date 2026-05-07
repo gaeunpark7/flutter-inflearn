@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter_stock_app/data/data_source/remote/dto/company_info_dto.dart';
 
