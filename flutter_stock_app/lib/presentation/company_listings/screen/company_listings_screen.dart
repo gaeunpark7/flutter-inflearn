@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_stock_app/presentation/company_listings/screen/company_info_screen.dart';
 import 'package:flutter_stock_app/presentation/company_listings/widget/company_text_field.dart';
 import 'package:flutter_stock_app/presentation/provider/company_listings_notifier.dart';
 
@@ -59,6 +60,15 @@ class _CompanyListingsScreenState extends ConsumerState<CompanyListingsScreen> {
                     itemBuilder: (ctx, index) {
                       final company = value[index];
                       return ListTile(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (ctx) =>
+                                  CompanyInfoScreen(symbol: company.symbol),
+                            ),
+                          );
+                        },
                         title: Text(
                           company.name,
                           style: TextStyle(color: Colors.white),

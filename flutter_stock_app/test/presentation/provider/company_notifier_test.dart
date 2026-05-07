@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_stock_app/di/provider_setup.dart';
+import 'package:flutter_stock_app/domain/model/company_info.dart';
 import 'package:flutter_stock_app/domain/model/company_listing.dart';
 import 'package:flutter_stock_app/domain/repository/stock_repository.dart';
 import 'package:flutter_stock_app/presentation/provider/company_listings_notifier.dart';
@@ -20,6 +22,12 @@ class FakeStockRepository implements StockRepository {
     lastFetchFromRemote = fetchFromRemote;
     lastQuery = query;
     return _handler(fetchFromRemote, query);
+  }
+
+  @override
+  Future<Result<CompanyInfo>> getCompanyInfo(String symbol) {
+    // TODO: implement getCompanyInfo
+    throw UnimplementedError();
   }
 }
 
