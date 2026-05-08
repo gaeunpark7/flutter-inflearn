@@ -30,6 +30,7 @@ class StockApi {
   }) async {
     return await _dio.get(
       '$baseUrl/query?function=TIME_SERIES_INTRADAY&symbol=$symbol&interval=60min&apikey=$apiKey&datatype=csv',
+      options: Options(responseType: ResponseType.plain),
     );
   }
 }

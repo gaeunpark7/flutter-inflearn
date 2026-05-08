@@ -6,6 +6,8 @@ import 'package:flutter_stock_app/util/theme.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   Hive.initFlutter(); //hive init
   Hive.registerAdapter(CompanyListingEntityAdapter());
 

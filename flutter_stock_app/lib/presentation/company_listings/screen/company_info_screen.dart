@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_stock_app/presentation/company_listings/widget/stock_chart.dart';
 import 'package:flutter_stock_app/presentation/provider/company_info_notifier.dart';
 
 class CompanyInfoScreen extends ConsumerStatefulWidget {
@@ -15,6 +16,8 @@ class _CompanyInfoScreenState extends ConsumerState<CompanyInfoScreen> {
   @override
   Widget build(BuildContext context) {
     final infoAsync = ref.watch(companyInfoProvider(widget.symbol));
+    final intradayAsync = ref.watch(intradayInfoProvider(widget.symbol));
+    var circularProgressIndicator = CircularProgressIndicator();
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.grey.shade900,
@@ -55,6 +58,25 @@ class _CompanyInfoScreenState extends ConsumerState<CompanyInfoScreen> {
                   value.description,
                   style: TextStyle(fontSize: 12, color: Colors.white),
                 ),
+                const SizedBox(height: 16),
+                Text(
+                  '주가 그래프',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                switch (intradayAsync) {
+                  AsyncData(:final value) => StockChart(infos: value),
+                  AsyncError(:final error) => Center(
+                    child: Text(
+                      'e:$error',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  (_) => circularProgressIndicator,
+                },
               ],
             ),
             AsyncError(:final error) => Center(child: Text('$error')),

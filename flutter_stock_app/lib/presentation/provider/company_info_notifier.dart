@@ -2,11 +2,21 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_stock_app/di/provider_setup.dart';
 import 'package:flutter_stock_app/domain/model/company_info.dart';
+import 'package:flutter_stock_app/domain/model/intraday_info.dart';
 
 final companyInfoProvider =
     AsyncNotifierProviderFamily<CompanyInfoNotifier, CompanyInfo, String>(
       CompanyInfoNotifier.new,
     );
+
+final intradayInfoProvider = FutureProvider.family<List<IntradayInfo>, String>((
+  ref,
+  symbol,
+) async {
+  final repo = ref.read(repoProvider);
+  final result = await repo.getIntradayInfo(symbol);
+  return result.when(success: (data) => data, error: (e) => throw e);
+});
 
 class CompanyInfoNotifier extends FamilyAsyncNotifier<CompanyInfo, String> {
   @override
@@ -15,7 +25,6 @@ class CompanyInfoNotifier extends FamilyAsyncNotifier<CompanyInfo, String> {
     final result = await repo.getCompanyInfo(symbol);
     return result.when(success: (data) => data, error: (e) => throw e);
   }
-}
 
   //불러오기
   // Future<void> getCompanyIfo(String symbol) async {
@@ -28,4 +37,4 @@ class CompanyInfoNotifier extends FamilyAsyncNotifier<CompanyInfo, String> {
   //     error: (e) => AsyncError(e, StackTrace.current),
   //   );
   // }
-
+}
